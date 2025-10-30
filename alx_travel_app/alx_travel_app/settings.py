@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from environ import Env
 import os
+from datetime import timedelta
 
 env = Env(
     # set casting, default value
@@ -45,10 +46,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'listings',
     'corsheaders',
     'rest_framework',
     'drf_yasg',
-    'listings',
     'django_seed',
 ]
 
@@ -112,14 +113,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # or your provider
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'harploidsoft@gmail.com'
-EMAIL_HOST_PASSWORD = 'La07di12po@2024**'
+EMAIL_HOST_USER = env("HOST_EMAIL")
+EMAIL_HOST_PASSWORD = env("HOST_EMAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-CHAPA_SECRET_KEY = env.CHAPA_SECRET_KEY
+CHAPA_SECRET_KEY = env("CHAPA_SECRET_KEY")
 CHAPA_BASE_URL = "https://api.chapa.co/v1/transaction/initialize"
 
 
@@ -144,3 +145,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Lagos'
+
+CELERY_BEAT_SCHEDULE = {
+    
+}

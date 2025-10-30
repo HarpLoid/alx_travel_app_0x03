@@ -23,6 +23,28 @@ class BookingViewSet(viewsets.ModelViewSet):
     
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        booking = serializer.save()
+        
+        user_email = booking.user
+        listing_name = booking.listing_id.name
+        total_price = booking.total_price
+        start_date = booking.start_date
+        end_date = booking.end_date
+
+        send_booking_confirmation_email.delay(
+            user_email,
+            str(booking.booking_id),
+            listing_name,
+            str(total_price),
+            str(start_date),
+            str(end_date)
+        )
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class PaymentViewSet(viewsets.ViewSet):
     """
